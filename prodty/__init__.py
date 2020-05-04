@@ -1,12 +1,15 @@
 import os
 
-from flask import (
-    Flask
-)
+from flask import Flask
+
+from . import db
 
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
+    app.config.from_mapping(
+        DATABASE=os.path.join(app.instance_path, 'prodty.sqlite')
+    )
 
     if not os.path.exists(app.instance_path):
         os.makedirs(app.instance_path)
@@ -19,6 +22,8 @@ def create_app(test_config=None):
     @app.route('/hello')
     def hello():
         return 'Hello!'
+
+    db.init_app(app)
 
     return app
 
