@@ -7,8 +7,3 @@ SELECT * \
 FROM user \
 WHERE username = ?'
 
-get_user_by_id = '\
-SELECT * \
-FROM user \
-WHERE id = ?'
-

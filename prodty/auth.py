@@ -26,10 +26,12 @@ def signup():
         passwd = request.form['password']
         passwd2 = request.form['password2']
 
-        if not validate(username, passwd, passwd2, rule='signup'):
+        db = get_db()
+        user = db.execute(sqls.get_user_by_username, (username,)).fetchone()
+
+        if not validate(username, passwd, passwd2, user, rule='signup'):
             return render_template(template)
 
-        db = get_db()
         db.execute(sqls.add_user, (username, generate_password_hash(passwd)))
         db.commit()
 
@@ -46,14 +48,13 @@ def signin():
         passwd = request.form['password']
 
         db = get_db()
-        user = db.execute(sqls.get_user_by_username,
-                          (username,)).fetchone()
+        user = db.execute(sqls.get_user_by_username, (username,)).fetchone()
 
         if not validate(username, passwd, user, rule='signin'):
             return render_template(template)
 
         session.clear()
-        session['user_id'] = user['id']
+        session['username'] = user['username']
 
         return redirect(url_for('auth.signup'))
 
@@ -68,12 +69,12 @@ def logout():
 
 @bp.before_app_request
 def load_user():
-    user_id = session.get('user_id')
-    if user_id is None:
+    username = session.get('username')
+    if username is None:
         g.user = None
     else:
-        g.user = get_db().execute(sqls.get_user_by_id,
-                                  (user_id,)).fetchone()
+        g.user = get_db().execute(sqls.get_user_by_username,
+                                  (username,)).fetchone()
 
 
 def login_requried(view):
