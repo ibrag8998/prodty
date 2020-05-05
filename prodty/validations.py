@@ -25,8 +25,8 @@ def validate(*args, rule=None, **kwargs):
 
     # check if specified rule is correct.
     # This assert is not in try block, because if it was there,
-    # this func will return False when rule not in rules.
-    # This means the data is not valid, so error will be flashed and
+    # :validate: func will return False when rule not in rules.
+    # It means the data is not valid, so error will be flashed and
     # template returned, with this debugging message in it,
     # but you most probably don't want user to see this message.
     assert rule in rules, 'Correct :rule: parameter needed'
