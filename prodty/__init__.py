@@ -1,9 +1,11 @@
 import os
 
 from flask import Flask
+from flask import render_template
 
 from . import db
 from . import auth
+from . import task
 
 
 def create_app(test_config=None):
@@ -21,10 +23,19 @@ def create_app(test_config=None):
 
     db.init_app(app)
     app.register_blueprint(auth.bp)
+    app.register_blueprint(task.bp)
+
+    # the following line lets us use ``` url_for('index') ```
+    # instead of ``` url_for('task.index') ```
+    app.add_url_rule('/', endpoint='index')
 
     @app.route('/hello')
     def hello():
         return 'Hello!'
+
+    @app.errorhandler(404)
+    def page_not_found(e):
+        return render_template('page_not_found.html'), 404
 
     return app
 
