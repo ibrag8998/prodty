@@ -1,0 +1,17 @@
+{% extends 'wrapper.html' %}
+
+{% block header %}
+  <h1>{% block title %}Tasks{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  {% if g.user %}
+    <a href="{{ url_for('task.add') }}">
+      <button type="submit" class="btn btn-primary btn-block">Add Task</button>
+    </a>
+  {% endif %}
+
+  <div class="tasks-container mb-3">
+    {% include 'includes/tasks_list.html' %}
+  </div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'wrapper.html' %}
+
+{% block header %}
+  <h1>{% block title %}Add Task{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <div class="tasks-container mb-3">
+    {% include 'includes/tasks_list.html' %}
+  </div>
+
+  <form method="post">
+    <div class="form-group">
+      <label for="task">Task:</label>
+      <textarea class="form-control" id="task" name="task" rows="3"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Add</button>
+  </form>
+{% endblock %}

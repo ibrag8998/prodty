@@ -1,0 +1,10 @@
+{% for task in tasks %}
+    <div class="card mt-1">
+      <div class="card-body">
+        <form class="form-inline my-2 my-lg-0" action="{{ url_for('task.done', id_=task['id']) }}" method="post">
+          <button type="submit" class="badge badge-pill badge-dark">&#10004;</button>
+          <div class="task-content ml-1">{{ task['content'] }}</div>
+        </form>
+      </div>
+    </div>
+  {% endfor %}

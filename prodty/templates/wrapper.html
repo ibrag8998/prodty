@@ -9,7 +9,7 @@
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">Prodty</a>
+    <a class="navbar-brand" href="{{ url_for('index') }}">Prodty</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -34,12 +34,16 @@
     <header class="mt-5 mb-5">
       {% block header %}{% endblock %}
     </header>
+
     <div class="flashes">
       {% for message in get_flashed_messages() %}
         <div class="alert alert-info" role="alert">{{ message }}</div>
       {% endfor %}
     </div>
-    {% block content %}{% endblock %}
+
+    <div class="container block-content">
+      {% block content %}{% endblock %}      
+    </div>
   </div>
 </body>
 </html>
