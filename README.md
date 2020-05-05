@@ -11,5 +11,5 @@ $ export FLASK_APP=prodty
 $ flask run
 ```
 
-Now go to localhost:5000 and enjoy :D
+Now go to http://localhost:5000 and enjoy :D
 
