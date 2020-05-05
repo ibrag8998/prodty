@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <title>{% block title %}{% endblock %} - Prodty</title>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">Prodty</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        {% if g.user %}
+          <li class="nav-item active">
+            <a class="nav-link" href="#">{{ g.user['username'] }}</a>
+          </li>
+        {% endif %}
+      </ul>
+      {% if g.user %}
+        <form class="form-inline my-2 my-lg-0" method="post" action="{{ url_for('auth.logout') }}">
+          <button class="btn btn-link my-2 my-sm-0 btn-logout" type="submit">Log Out</button>
+        </form>
+      {% else %}
+        <a href="{{ url_for('auth.signin') }}"><button class="btn btn-link my-2 my-sm-0 btn-logout">Sign In</button></a>
+        <a href="{{ url_for('auth.signup') }}"><button class="btn btn-link my-2 my-sm-0 btn-logout">Sign Up</button></a>
+      {% endif %}
+    </div>
+  </nav>
+  <div class="container">
+    <header class="mt-5 mb-5">
+      {% block header %}{% endblock %}
+    </header>
+    <div class="flashes">
+      {% for message in get_flashed_messages() %}
+        <div class="alert alert-info" role="alert">{{ message }}</div>
+      {% endfor %}
+    </div>
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>
