@@ -4,3 +4,6 @@
 .btn-white:hover {
   color: white;
 }
+button.badge {
+  border: none;
+}
