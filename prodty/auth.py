@@ -1,3 +1,5 @@
+from functools import wraps
+
 from flask import Blueprint
 from flask import request
 from flask import render_template
@@ -72,4 +74,15 @@ def load_user():
     else:
         g.user = get_db().execute(sqls.get_user_by_id,
                                   (user_id,)).fetchone()
+
+
+def login_requried(view):
+    @wraps(view)
+    def wrapper_view(*args, **kwargs):
+        if g.user is None:
+            return redirect(url_for('auth.signin'))
+
+        return view(*args, **kwargs)
+
+    return wrapper_view
 
