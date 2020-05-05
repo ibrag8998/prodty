@@ -64,10 +64,8 @@ def signin():
         session.clear()
         session['username'] = user['username']
 
-        # note: this is just for testing. Of course, its bad practice to
-        # redirect user to signup after signin, but I have not implemented
-        # other views yet, so temporary, this redirect will be here :D
-        return redirect(url_for('auth.signup'))
+        # successful login, redirect to main page
+        return redirect(url_for('index'))
 
     return render_template(template)
 
@@ -88,7 +86,7 @@ def load_user():
                                   (username,)).fetchone()
 
 
-def login_requried(view):
+def login_required(view):
     @wraps(view)
     def wrapper_view(*args, **kwargs):
         if g.user is None:
