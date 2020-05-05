@@ -10,6 +10,7 @@ from werkzeug.security import generate_password_hash
 
 from .db import get_db
 from .validations import validate
+from . import sqls
 
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
@@ -26,9 +27,8 @@ def signup():
         if not validate(username, passwd, passwd2, rule='signup'):
             return render_template(template)
 
-        db.execute('INSERT INTO user (username, password)'
-                   ' VALUES (?, ?)',
-                   (username, generate_password_hash(passwd)))
+        db = get_db()
+        db.execute(sqls.add_user, (username, generate_password_hash(passwd)))
         db.commit()
 
         return redirect(url_for('auth.signin'))
@@ -44,7 +44,7 @@ def signin():
         passwd = request.form['password']
 
         db = get_db()
-        user = db.execute('SELECT * FROM user WHERE username=?',
+        user = db.execute(sqls.get_user_by_username,
                           (username,)).fetchone()
 
         if not validate(username, passwd, user, rule='signin'):
@@ -70,6 +70,6 @@ def load_user():
     if user_id is None:
         g.user = None
     else:
-        g.user = get_db().execute('SELECT * FROM user WHERE id=?',
+        g.user = get_db().execute(sqls.get_user_by_id,
                                   (user_id,)).fetchone()
 
