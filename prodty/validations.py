@@ -95,6 +95,7 @@ def validate_signin(username, passwd, user):
 
 
 rules = {
+    'check_plain': check_plain,
     'signup': validate_signup,
     'signin': validate_signin,
 }
