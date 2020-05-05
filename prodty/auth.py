@@ -53,6 +53,8 @@ def signin():
         session.clear()
         session['user_id'] = user['id']
 
+        return redirect(url_for('auth.signup'))
+
     return render_template(template)
 
 
