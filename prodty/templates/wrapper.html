@@ -15,19 +15,18 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto">
-        {% if g.user %}
-          <li class="nav-item active">
-            <a class="nav-link" href="#">{{ g.user['username'] }}</a>
-          </li>
-        {% endif %}
+        <li class="nav-item active">
+          <a class="nav-link" href="{{ url_for('hello') }}">Say hello</a>
+        </li>
       </ul>
       {% if g.user %}
+        <a href="#"><button class="btn btn-outline-light my-2 my-sm-0 mr-2">{{ g.user['username'] }}</button></a>
         <form class="form-inline my-2 my-lg-0" method="post" action="{{ url_for('auth.logout') }}">
-          <button class="btn btn-link my-2 my-sm-0 btn-logout" type="submit">Log Out</button>
+          <button class="btn btn-link my-2 my-sm-0 btn-white" type="submit">Log Out</button>
         </form>
       {% else %}
-        <a href="{{ url_for('auth.signin') }}"><button class="btn btn-link my-2 my-sm-0 btn-logout">Sign In</button></a>
-        <a href="{{ url_for('auth.signup') }}"><button class="btn btn-link my-2 my-sm-0 btn-logout">Sign Up</button></a>
+        <a href="{{ url_for('auth.signup') }}"><button class="btn btn-outline-light my-2 my-sm-0 mr-2 ">Sign Up</button></a>
+        <a href="{{ url_for('auth.signin') }}"><button class="btn btn-link btn-white my-2 my-sm-0 mr-2">Sign In</button></a>
       {% endif %}
     </div>
   </nav>
