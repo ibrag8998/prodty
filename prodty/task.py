@@ -39,7 +39,7 @@ def index():
 def add():
     template = 'task/add.html'
     if request.method == 'POST':
-        task = request.form['task']
+        task = request.form.get('task')
 
         # it will be bloat if I will use validations.validate
         # func here because I just need to check one input
