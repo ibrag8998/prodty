@@ -5,7 +5,7 @@ from flask import render_template
 
 from . import db
 from . import auth
-from . import task
+from .task import task
 
 
 def create_app(test_config=None):
