@@ -1,0 +1,4 @@
+include prodty/schema.sql
+graft prodty/static
+graft prodty/templates
+global-exclude *.pyc
