@@ -36,7 +36,7 @@ def validate(*args, rule=None, **kwargs):
         rules[rule](*args, **kwargs)
         return True
     except AssertionError as e:
-        flash(e)
+        flash(str(e))
         return False
 
 
@@ -66,7 +66,11 @@ def check_passwd_len(passwd, message=None):
 def validate_signup(username, passwd, passwd2, user):
     """ Validation rule for signup """
     # check if username and password are filled in
-    check_plain((username, 'Username'), (passwd, 'Password'))
+    check_plain(
+        (username, 'Username'),
+        (passwd, 'Password'),
+        (passwd2, 'Password confirmation')
+    )
 
     # check if passwd len is minimum 6 symbols
     check_passwd_len(passwd)
