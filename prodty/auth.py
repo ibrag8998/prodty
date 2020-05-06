@@ -23,9 +23,9 @@ def signup():
     template = 'auth/signup.html'
     if request.method == 'POST':
         # get data
-        username = request.form.get('username')
-        passwd = request.form.get('password')
-        passwd2 = request.form.get('password2')
+        username = request.form.get('username', '')
+        passwd = request.form.get('password', '')
+        passwd2 = request.form.get('password2', '')
 
         db = get_db()
         user = db.execute(sqls.get_user_by_username, (username,)).fetchone()
@@ -50,8 +50,8 @@ def signin():
     template = 'auth/signin.html'
     if request.method == 'POST':
         # get data
-        username = request.form.get('username')
-        passwd = request.form.get('password')
+        username = request.form.get('username', '')
+        passwd = request.form.get('password', '')
 
         db = get_db()
         user = db.execute(sqls.get_user_by_username, (username,)).fetchone()
