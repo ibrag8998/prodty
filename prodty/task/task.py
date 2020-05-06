@@ -6,16 +6,34 @@ from flask import url_for
 from flask import flash
 from flask import g
 
-from .db import get_db
-from .auth import login_required
-from . import sqls
+from prodty.db import get_db
+from prodty.auth import login_required
+
+
+class SQL:
+    get_user_tasks = ' \
+        SELECT * \
+        FROM task \
+        INNER JOIN user \
+        ON user.id = task.author_id \
+        WHERE user.id = ? \
+        ORDER BY pub_date DESC'
+
+    add_task = ' \
+        INSERT INTO task (author_id, content) \
+        VALUES (?, ?)'
+
+    delete_task_by_id = '\
+        DELETE \
+        FROM task \
+        WHERE id = ?'
 
 
 bp = Blueprint('task', __name__)
 
 
 def get_tasks():
-    return get_db().execute(sqls.get_user_tasks, (g.user['id'],)).fetchall()
+    return get_db().execute(SQL.get_user_tasks, (g.user['id'],)).fetchall()
 
 
 # functionality of this blueprint only available for
@@ -48,7 +66,7 @@ def add():
             return render_template(template, tasks=get_tasks())
 
         db = get_db()
-        db.execute(sqls.add_task, (g.user['id'], task))
+        db.execute(SQL.add_task, (g.user['id'], task))
         db.commit()
 
         # when the task is added, I want user to stay at
@@ -62,7 +80,7 @@ def add():
 @bp.route('/done/<int:id_>', methods=['POST'])
 def done(id_):
     db = get_db()
-    db.execute(sqls.delete_task_by_id, (id_,))
+    db.execute(SQL.delete_task_by_id, (id_,))
     db.commit()
     return redirect(url_for('index'))
 

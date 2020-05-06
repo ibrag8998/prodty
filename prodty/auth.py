@@ -12,7 +12,17 @@ from werkzeug.security import generate_password_hash
 
 from .db import get_db
 from .validations import validate
-from . import sqls
+
+
+class SQL:
+    add_user = '\
+        INSERT INTO user (username, password) \
+        VALUES (?, ?)'
+
+    get_user_by_username = '\
+        SELECT * \
+        FROM user \
+        WHERE username = ?'
 
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
@@ -28,13 +38,13 @@ def signup():
         passwd2 = request.form.get('password2', '')
 
         db = get_db()
-        user = db.execute(sqls.get_user_by_username, (username,)).fetchone()
+        user = db.execute(SQL.get_user_by_username, (username,)).fetchone()
 
         if not validate(username, passwd, passwd2, user, rule='signup'):
             return render_template(template)
 
         # on errors detected, add user
-        db.execute(sqls.add_user, (username, generate_password_hash(passwd)))
+        db.execute(SQL.add_user, (username, generate_password_hash(passwd)))
         db.commit()
 
         # Sometimes when you sign up on the site, you may forget password.
@@ -54,7 +64,7 @@ def signin():
         passwd = request.form.get('password', '')
 
         db = get_db()
-        user = db.execute(sqls.get_user_by_username, (username,)).fetchone()
+        user = db.execute(SQL.get_user_by_username, (username,)).fetchone()
 
         if not validate(username, passwd, user, rule='signin'):
             return render_template(template)
@@ -82,7 +92,7 @@ def load_user():
     if username is None:
         g.user = None
     else:
-        g.user = get_db().execute(sqls.get_user_by_username,
+        g.user = get_db().execute(SQL.get_user_by_username,
                                   (username,)).fetchone()
 
 
