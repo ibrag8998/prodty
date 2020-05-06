@@ -13,3 +13,12 @@ $ flask run
 
 Now go to http://localhost:5000 and enjoy :D
 
+## Testing
+
+In order to launch tests:
+
+```
+$ pip install pytest
+$ pytest
+```
+
