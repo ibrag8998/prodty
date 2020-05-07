@@ -9,6 +9,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'flask',
+        'dateparser',
     ],
 )
 
