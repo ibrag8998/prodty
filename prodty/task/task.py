@@ -9,6 +9,8 @@ from flask import g
 from prodty.db import get_db
 from prodty.auth import login_required
 
+from .tstamp import recognize
+
 
 class SQL:
     get_user_tasks = ' \
@@ -20,8 +22,8 @@ class SQL:
         ORDER BY pub_date DESC'
 
     add_task = ' \
-        INSERT INTO task (author_id, content) \
-        VALUES (?, ?)'
+        INSERT INTO task (author_id, content, tstamp) \
+        VALUES (?, ?, ?)'
 
     delete_task_by_id = '\
         DELETE \
@@ -65,8 +67,10 @@ def add():
         if not task:
             return render_template(template, tasks=get_tasks())
 
+        tstamp = recognize(task)
+
         db = get_db()
-        db.execute(SQL.add_task, (g.user['id'], task))
+        db.execute(SQL.add_task, (g.user['id'], task, tstamp))
         db.commit()
 
         # when the task is added, I want user to stay at
