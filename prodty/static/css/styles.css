@@ -7,3 +7,6 @@
 button.badge {
   border: none;
 }
+.form-done {
+  display: inline-block;
+}
