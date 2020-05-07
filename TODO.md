@@ -1,15 +1,21 @@
 # TODO File
 
-> TODO
+> vvv Active vvv
 
-I want make task cards behave like that:
+- Make task cards behave like that:
 when user clicks on its content, he now can type (update)
 the task. Once he hits enter, task is updated.
 
-> TODO
+> ^^^ Active ^^^
 
-I want the same technique to work with adding task
+- Same technique with adding task
 
-> TODO
+- Improve UX because now it is so bad
 
-I really want to improve UX because now it is so bad
+- Allow user to remove notification timestamp
+
+## BIGTODOS
+
+- Add settings
+    * Use timestamp detection (detection :D) or not
+    * Notifications
