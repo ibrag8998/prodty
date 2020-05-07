@@ -13,23 +13,25 @@ def recognize(text):
     it returning all timestamps
     """
     date = rec_date(text)
-    hours, minutes = rec_time(text)
+    hrs, mins = rec_time(text)
+    res = date + timedelta(hours=hrs, minutes=mins)
 
-    return date + timedelta(hours=hours, minutes=minutes)
+    return res.timestamp()
 
 
 def rec_date(text):
     """ Recognize date """
     res = search_dates(text)
+    now = datetime.now()
     date = None
 
-    if res is not None:
+    if res:
         res = res[0][1]
-        date = datetime(res.year, res.month, res.day)
+        if res > now:
+            date = datetime(res.year, res.month, res.day)
 
     if not date:
-        tmp = datetime.now()
-        date = datetime(tmp.year, tmp.month, tmp.day)
+        date = datetime(now.year, now.month, now.day)
 
     return date
 
@@ -38,18 +40,19 @@ def rec_time(text):
     """ Recognize time """
     pattern = r'(^|\s)\d{1,2}:\d{2}($|\s)'
     res = re.search(pattern, text)
-    if res:
-        hour, minute = res.group().split(':')
-        return int(hour), int(minute)
-    else:
-        return 18, 0
+    hr, min_ = None, None
+    now = datetime.now()
 
-
-while True:
-    test = input()
-    res = recognize(test)
     if res:
-        print(res.strftime('%c'))
+        hr, min_ = map(int, res.group().split(':'))
     else:
-        print('-_-')
+        hr, min_ = 18, 0
+
+    if now.hour > hr:
+        hr += 24
+
+    elif now.hour == hr and now.minute > min_:
+        hr += 1
+
+    return hr, min_
 
