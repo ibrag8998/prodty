@@ -2,12 +2,12 @@
   <div class="card mt-1 task-card">
     <div class="card-body">
       <div class="task-content ml-1">{{ task['content'] }}</div>
-
       <form class="form-inline my-2 my-lg-0 form-done" action="{{ url_for('task.done', id_=task['id']) }}" method="post">
-        <button type="submit" class="badge badge-pill badge-dark">&#10004;</button>
+        <button type="submit" class="badge badge-pill badge-primary">&#10004;</button>
       </form>
+
       {% if task['tstamp'] %}
-        <span class="badge badge-primary">{{ task['tstamp'] | todt }}</span>
+        <span class="badge badge-dark">{{ task['tstamp'] | todt }}</span>
       {% endif %}
     </div>
   </div>
