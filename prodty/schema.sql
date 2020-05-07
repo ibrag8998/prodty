@@ -6,7 +6,7 @@ CREATE TABLE task (
   author_id INTEGER NOT NULL,
   content TEXT NOT NULL,
   pub_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  timestamps TIMESTAMP,
+  tstamp INTEGER,
   FOREIGN KEY (author_id) REFERENCES user (id)
 );
 
