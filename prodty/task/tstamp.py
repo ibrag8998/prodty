@@ -33,9 +33,25 @@ def recognize(text):
     """
     date = rec_date(text)
     hrs, mins = rec_time(text)
+
+    if date.date() == datetime.today().date():
+        hrs, mins = adapt_time(hrs, mins)
+
     res = date + timedelta(hours=hrs, minutes=mins)
 
     return int(res.timestamp())
+
+
+def adapt_time(hrs, mins):
+    now = datetime.now()
+
+    if now.hour > hrs:
+        hrs += 24
+
+    elif now.hour == hrs and now.minute > mins:
+        hrs += 1
+
+    return hrs, mins
 
 
 def rec_date(text):
@@ -60,18 +76,11 @@ def rec_time(text):
     pattern = r'(^|\s)\d{1,2}:\d{2}($|\s)'
     res = re.search(pattern, text)
     hr, min_ = None, None
-    now = datetime.now()
 
     if res:
         hr, min_ = map(int, res.group().split(':'))
     else:
         hr, min_ = 18, 0
-
-    if now.hour > hr:
-        hr += 24
-
-    elif now.hour == hr and now.minute > min_:
-        hr += 1
 
     return hr, min_
 
