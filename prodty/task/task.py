@@ -117,9 +117,8 @@ def done(id_):
     db = get_db()
     db.execute(SQL.delete_task_by_id, (id_,))
     db.commit()
-    flash('Done! Good job!')
-    # see 'wrapper.html', look at 'undo'
-    flash('undo')
+    flash('Done! Good job! (undo)')
+    # 'undo' is unique message, see wrapper.html
     return redirect(url_for('index'))
 
 
@@ -132,9 +131,7 @@ def rmts(id_):
     # set tstamp to NULL
     db.execute(SQL.update_timestamp_by_id, (None, id_))
     db.commit()
-    flash('Removed!')
-    # 'undo' is unique message, see wrapper.html
-    flash('undo')
+    flash('Removed! (undo)')
     return redirect(url_for('index'))
 
 
