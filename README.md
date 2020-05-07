@@ -8,7 +8,6 @@ In development
 $ git clone https://github.com/ibrag8998/prodty.git
 $ cd prodty
 $ pip install -r requirements.txt
-$ export FLASK_APP=prodty
 $ flask run
 ```
 
