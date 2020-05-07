@@ -37,7 +37,13 @@
 
     <div class="flashes">
       {% for message in get_flashed_messages() %}
-        <div class="alert alert-info" role="alert">{{ message }}</div>
+          <div class="alert alert-info" role="alert">
+            {% if message == 'undo' %}
+              {% include 'includes/flash_undo.html' %}
+            {% else %}
+              {{ message }}
+            {% endif %}
+          </div>
       {% endfor %}
     </div>
 
