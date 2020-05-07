@@ -5,6 +5,8 @@ from flask import redirect
 from flask import url_for
 from flask import flash
 from flask import g
+from flask import session
+from flask import Markup
 
 from prodty.db import get_db
 from prodty.auth import login_required
@@ -30,12 +32,38 @@ class SQL:
         FROM task \
         WHERE id = ?'
 
+    update_timestamp_by_id = '\
+        UPDATE task \
+        SET tstamp = ? \
+        WHERE id = ?'
 
-bp = Blueprint('task', __name__)
+    get_task_by_id = '\
+        SELECT * \
+        FROM task \
+        WHERE id = ?'
+
+    def row_to_dict(row):
+        keys = ['id', 'author_id', 'content', 'pub_date', 'tstamp']
+        d = {}
+        i = 0
+        for v in row:
+            d[keys[i]] = v
+            i += 1
+        return d
 
 
 def get_tasks():
     return get_db().execute(SQL.get_user_tasks, (g.user['id'],)).fetchall()
+
+
+def save_last_pop(id_):
+    session['last_task_pop'] = SQL.row_to_dict(
+        get_db().execute(
+            SQL.get_task_by_id, (id_,)
+        ).fetchone())
+
+
+bp = Blueprint('task', __name__)
 
 
 # functionality of this blueprint only available for
@@ -65,6 +93,7 @@ def add():
         # func here because I just need to check one input
         # if it is plain
         if not task:
+            # no flash needed
             return render_template(template, tasks=get_tasks())
 
         tstamp = recognize(task)
@@ -83,8 +112,61 @@ def add():
 
 @bp.route('/done/<int:id_>', methods=['POST'])
 def done(id_):
+    save_last_pop(id_)
+
     db = get_db()
     db.execute(SQL.delete_task_by_id, (id_,))
     db.commit()
+    flash('Done! Good job!')
+    # see 'wrapper.html', look at 'undo'
+    flash('undo')
+    return redirect(url_for('index'))
+
+
+# remove timestamp
+@bp.route('/rmts/<int:id_>', methods=['POST'])
+def rmts(id_):
+    save_last_pop(id_)
+
+    db = get_db()
+    # set tstamp to NULL
+    db.execute(SQL.update_timestamp_by_id, (None, id_))
+    db.commit()
+    flash('Removed!')
+    # 'undo' is unique message, see wrapper.html
+    flash('undo')
+    return redirect(url_for('index'))
+
+
+@bp.route('/restore', methods=['POST'])
+def restore():
+    if 'last_task_pop' not in session:
+        flash('No')
+        return redirect(url_for('index'))
+
+    db = get_db()
+    # contains info about last popped before pop
+    last = session['last_task_pop'] # just for short
+    # contains info about last popped after pop
+    task = db.execute(SQL.get_task_by_id, (last['id'],)).fetchone()
+
+    # if last pop was deleting (done), means task is None
+    if not task:
+        # insert last popped task
+        db.execute(SQL.add_task, (
+            last['author_id'],
+            last['content'],
+            last['tstamp']
+        ))
+    # elif task has no tstamp, means tstamp was deleted
+    # so task['tstamp'] is None
+    elif not task['tstamp']:
+        db.execute(SQL.update_timestamp_by_id, (last['tstamp'], last['id']))
+    # for some extraordinary cases huh
+    else:
+        flash('Nothing to undo')
+
+    db.commit()
+
     return redirect(url_for('index'))
 
