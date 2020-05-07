@@ -6,7 +6,9 @@
       <form class="form-inline my-2 my-lg-0 form-done" action="{{ url_for('task.done', id_=task['id']) }}" method="post">
         <button type="submit" class="badge badge-pill badge-dark">&#10004;</button>
       </form>
-      <span class="badge badge-primary">{{ task['tstamp'] | todt }}</span>
+      {% if 'tstamp' in task %}
+        <span class="badge badge-primary">{{ task['tstamp'] | todt }}</span>
+      {% endif %}
     </div>
   </div>
 {% endfor %}
