@@ -7,6 +7,23 @@
 button.badge {
   border: none;
 }
-.form-done {
+.form-badge {
   display: inline-block;
+}
+.card-body {
+  padding: 10px;
+}
+.task-content {
+  min-width: 100%;
+  border: none;
+  border-radius: 0;
+  line-height: 1;
+  border-bottom: 1px solid black;
+  padding-bottom: 0;
+}
+.task-form {
+  width: 100%;
+}
+#new-task {
+  width: 100%;
 }

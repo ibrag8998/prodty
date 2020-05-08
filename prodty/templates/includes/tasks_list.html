@@ -1,16 +1,25 @@
 {% for task in tasks %}
-  <div class="card mt-1 task-card">
+  <div class="card mt-2 task-card">
     <div class="card-body">
-      <div class="task-content ml-1">{{ task['content'] }}</div>
-      <form class="form-inline my-2 my-lg-0 form-done" action="{{ url_for('task.done', id_=task['id']) }}" method="post">
-        <button type="submit" class="badge badge-pill badge-primary">&#10004;</button>
-      </form>
+      <div class="task">
 
-      {% if task['tstamp'] %}
-        <form class="form-inline my-2 my-lg-0 form-done" action="{{ url_for('task.rmts', id_=task['id']) }}" method="post">
-          <button type="submit" class="badge badge-dark">{{ task['tstamp'] | todt }}</button>
+        <form id="task-form-{{ task['id'] }}" class="form-inline my-2 my-lg-0 task-form" action="{{ url_for('task.edit', id_=task['id']) }}" method="post">
+          <input class="form-control task-content" name="task" placeholder="Write date or time for scheduling" value="{{ task['content'] }}">
         </form>
-      {% endif %}
+
+        <form class="form-inline my-2 my-lg-0 form-badge" action="{{ url_for('task.done', id_=task['id']) }}" method="post">
+          <button type="submit" class="badge badge-pill badge-primary">&#10004;</button>
+        </form>
+
+        <button type="submit" class="badge badge-dark" form="task-form-{{ task['id'] }}">Edit</button>
+
+        {% if task['tstamp'] %}
+          <form class="form-inline my-2 my-lg-0 form-badge" action="{{ url_for('task.rmts', id_=task['id']) }}" method="post">
+            <button type="submit" class="badge badge-dark">{{ task['tstamp'] | todt }}</button>
+          </form>
+        {% endif %}
+
+      </div>
     </div>
   </div>
 {% endfor %}
