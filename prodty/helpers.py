@@ -3,6 +3,12 @@ from functools import wraps
 from flask import render_template
 from flask import request
 from flask import g
+from flask import redirect
+from flask import url_for
+
+
+def to_index():
+    return redirect(url_for('index'))
 
 
 def templated(template=None):
