@@ -2,13 +2,11 @@
 
 > vvv Active vvv
 
-- Make task cards behave like that:
-when user clicks on its content, he now can type (update)
-the task. Once he hits enter, task is updated.
+- Use WTForms in all views instead of self hardcoded ones
 
 > ^^^ Active ^^^
 
-- Same technique with adding task
+- Make notifications
 
 - Improve UX because now it is so bad
 
