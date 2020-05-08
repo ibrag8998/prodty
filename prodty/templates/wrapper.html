@@ -39,7 +39,7 @@
       {% for message in get_flashed_messages() %}
           <div class="alert alert-info" role="alert">
             {% if '(undo)' in message %}
-              {{ message.strip('(undo)') }}<br>
+              {{ message.strip('(undo)') }}
               {% include 'includes/flash_undo.html' %}
             {% else %}
               {{ message }}
