@@ -1,17 +1,20 @@
 from functools import wraps
 
-from flask import Blueprint
-from flask import request
-from flask import render_template
-from flask import redirect
-from flask import url_for
-from flask import session
-from flask import g
-
+from flask import (
+    Blueprint,
+    request,
+    render_template,
+    redirect,
+    url_for,
+    session,
+    flash,
+    g
+)
 from werkzeug.security import generate_password_hash
 
 from .db import get_db
 from .helpers import templated, to_index
+from .forms import SignUpForm
 from .validations import validate
 
 
@@ -32,20 +35,19 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 @bp.route('/signup', methods=['GET', 'POST'])
 @templated()
 def signup():
-    if request.method == 'POST':
-        # get data
-        username = request.form.get('username', '')
-        passwd = request.form.get('password', '')
-        passwd2 = request.form.get('password2', '')
+    form = SignUpForm(request.form)
+    flash(form.errors)
+    if request.method == 'POST' and form.validate():
+        username = form.username.data
+        password = form.password.data
 
         db = get_db()
+
         user = db.execute(SQL.get_user_by_username, (username,)).fetchone()
+        if user:
+            return dict(form=form)
 
-        if not validate(username, passwd, passwd2, user, rule='signup'):
-            return {}
-
-        # on errors detected, add user
-        db.execute(SQL.add_user, (username, generate_password_hash(passwd)))
+        db.execute(SQL.add_user, (username, generate_password_hash(password)))
         db.commit()
 
         # Sometimes when you sign up on the site, you may forget password.
@@ -53,7 +55,8 @@ def signup():
         # his credentials again and minimize chance of forgetting something.
         return redirect(url_for('auth.signin'))
 
-    return {}
+    flash(form.errors)
+    return dict(form=form)
 
 
 @bp.route('/signin', methods=['GET', 'POST'])
