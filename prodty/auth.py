@@ -11,7 +11,7 @@ from flask import g
 from werkzeug.security import generate_password_hash
 
 from .db import get_db
-from .helpers import templated
+from .helpers import templated, to_index
 from .validations import validate
 
 
@@ -76,7 +76,7 @@ def signin():
         session['username'] = user['username']
 
         # successful login, redirect to main page
-        return redirect(url_for('index'))
+        return to_index()
 
     return {}
 

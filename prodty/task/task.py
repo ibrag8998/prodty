@@ -8,7 +8,7 @@ from flask import g
 from flask import session
 
 from prodty.db import get_db
-from prodty.helpers import templated
+from prodty.helpers import templated, to_index
 
 from .tstamp import recognize
 
@@ -34,6 +34,11 @@ class SQL:
     update_timestamp_by_id = '\
         UPDATE task \
         SET tstamp = ? \
+        WHERE id = ?'
+
+    update_content_by_id = '\
+        UPDATE task \
+        SET content = ? \
         WHERE id = ?'
 
     get_task_by_id = '\
@@ -83,31 +88,43 @@ def index():
     return {'tasks': get_tasks()}
 
 
-@bp.route('/add', methods=['GET', 'POST'])
-@templated()
+@bp.route('/add', methods=['POST'])
 def add():
-    if request.method == 'POST':
-        task = request.form.get('task', '')
+    task = request.form.get('new-task', '')
 
-        # it will be bloat if I will use validations.validate
-        # func here because I just need to check one input
-        # if it is plain
-        if not task:
-            # no flash needed
-            return {'tasks': get_tasks()}
+    if not task:
+        flash('No task typed :( Are you lazy?')
+        return to_index()
 
-        tstamp = recognize(task)
+    tstamp = recognize(task)
 
-        db = get_db()
-        db.execute(SQL.add_task, (g.user['id'], task, tstamp))
-        db.commit()
+    db = get_db()
+    db.execute(SQL.add_task, (g.user['id'], task, tstamp))
+    db.commit()
 
-        # when the task is added, I want user to stay at
-        # that page so he can add more tasks quickly.
-        # So I flash message and return needed template
-        flash('Added!')
+    # when the task is added, I want user to stay at
+    # that page so he can add more tasks quickly.
+    # So I flash message and return needed template
+    flash('Added!')
+    return to_index()
 
-    return {'tasks': get_tasks()}
+
+@bp.route('/edit/<int:id_>', methods=['POST'])
+def edit(id_):
+    task = request.form.get('task', '')
+
+    if not task:
+        # if task user selected the task and deleted its
+        # content, this probably means He want to delete it
+        return done(id_)
+
+    db = get_db()
+    tstamp = recognize(task)
+
+    db.execute(SQL.update_content_by_id, (task, id_))
+    db.execute(SQL.update_timestamp_by_id, (tstamp, id_))
+    db.commit()
+    return to_index()
 
 
 @bp.route('/done/<int:id_>', methods=['POST'])
@@ -119,7 +136,7 @@ def done(id_):
     db.commit()
     flash('Done! Good job! (undo)')
     # 'undo' is unique message, see wrapper.html
-    return redirect(url_for('index'))
+    return to_index()
 
 
 # remove timestamp
@@ -132,14 +149,14 @@ def rmts(id_):
     db.execute(SQL.update_timestamp_by_id, (None, id_))
     db.commit()
     flash('Removed! (undo)')
-    return redirect(url_for('index'))
+    return to_index()
 
 
 @bp.route('/restore', methods=['POST'])
 def restore():
     if 'last_task_pop' not in session:
         flash('No')
-        return redirect(url_for('index'))
+        return to_index()
 
     db = get_db()
     # contains info about last popped before pop
@@ -165,5 +182,5 @@ def restore():
 
     db.commit()
 
-    return redirect(url_for('index'))
+    return to_index()
 
