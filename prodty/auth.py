@@ -11,6 +11,7 @@ from flask import g
 from werkzeug.security import generate_password_hash
 
 from .db import get_db
+from .helpers import templated
 from .validations import validate
 
 
@@ -29,8 +30,8 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 
 @bp.route('/signup', methods=['GET', 'POST'])
+@templated()
 def signup():
-    template = 'auth/signup.html'
     if request.method == 'POST':
         # get data
         username = request.form.get('username', '')
@@ -41,7 +42,7 @@ def signup():
         user = db.execute(SQL.get_user_by_username, (username,)).fetchone()
 
         if not validate(username, passwd, passwd2, user, rule='signup'):
-            return render_template(template)
+            return {}
 
         # on errors detected, add user
         db.execute(SQL.add_user, (username, generate_password_hash(passwd)))
@@ -52,12 +53,12 @@ def signup():
         # his credentials again and minimize chance of forgetting something.
         return redirect(url_for('auth.signin'))
 
-    return render_template(template)
+    return {}
 
 
 @bp.route('/signin', methods=['GET', 'POST'])
+@templated()
 def signin():
-    template = 'auth/signin.html'
     if request.method == 'POST':
         # get data
         username = request.form.get('username', '')
@@ -67,7 +68,7 @@ def signin():
         user = db.execute(SQL.get_user_by_username, (username,)).fetchone()
 
         if not validate(username, passwd, user, rule='signin'):
-            return render_template(template)
+            return {}
 
         # add username to session, so site will think user is logged in
         # (see load_user() func)
@@ -77,7 +78,7 @@ def signin():
         # successful login, redirect to main page
         return redirect(url_for('index'))
 
-    return render_template(template)
+    return {}
 
 
 @bp.route('/logout', methods=['POST'])
@@ -94,17 +95,4 @@ def load_user():
     else:
         g.user = get_db().execute(SQL.get_user_by_username,
                                   (username,)).fetchone()
-
-
-def login_required(view):
-    @wraps(view)
-    def wrapper_view(*args, **kwargs):
-        if g.user is None:
-            # user is not logged in, so he will be redirected to signin view
-            return redirect(url_for('auth.signin'))
-
-        # user is logged in, so he will get requested view
-        return view(*args, **kwargs)
-
-    return wrapper_view
 

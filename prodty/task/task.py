@@ -6,10 +6,9 @@ from flask import url_for
 from flask import flash
 from flask import g
 from flask import session
-from flask import Markup
 
 from prodty.db import get_db
-from prodty.auth import login_required
+from prodty.helpers import templated
 
 from .tstamp import recognize
 
@@ -79,13 +78,14 @@ def check_if_logged():
 
 
 @bp.route('/')
+@templated()
 def index():
-    return render_template('task/index.html', tasks=get_tasks())
+    return {'tasks': get_tasks()}
 
 
 @bp.route('/add', methods=['GET', 'POST'])
+@templated()
 def add():
-    template = 'task/add.html'
     if request.method == 'POST':
         task = request.form.get('task', '')
 
@@ -94,7 +94,7 @@ def add():
         # if it is plain
         if not task:
             # no flash needed
-            return render_template(template, tasks=get_tasks())
+            return {'tasks': get_tasks()}
 
         tstamp = recognize(task)
 
@@ -107,7 +107,7 @@ def add():
         # So I flash message and return needed template
         flash('Added!')
 
-    return render_template(template, tasks=get_tasks())
+    return {'tasks': get_tasks()}
 
 
 @bp.route('/done/<int:id_>', methods=['POST'])
