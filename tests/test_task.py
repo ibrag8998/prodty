@@ -2,17 +2,10 @@
 
 
 def test_add(client, auth):
-    # should be redirected because not logged in
-    assert client.get('/add').status_code == 302
-
     auth.login()
 
-    # if not logged in, should be redirected, else 200
-    assert client.get('/add').status_code == 200
-
     # test if tasks adds correctly
-    resp = client.post('/add', data={'task': 'test_task'})
-    assert b'test_task' in resp.data
+    assert client.post('/add', data={'task': 'test_task'}).status_code == 302
 
     # test tasks deleteing
     # since each time We launch test, temporary database
