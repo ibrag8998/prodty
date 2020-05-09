@@ -9,7 +9,8 @@ from werkzeug.security import generate_password_hash
 from werkzeug.security import check_password_hash
 
 from .db import get_db
-from .helpers import templated, to_index
+from .helpers import templated
+from .helpers import to_index
 from .forms import SignUpForm, SignInForm
 
 

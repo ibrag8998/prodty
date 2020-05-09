@@ -36,7 +36,7 @@
     </header>
 
     <div class="flashes">
-      {% for message in get_flashed_messages() %}
+      {% for message in get_flashed_messages(with_categories=true) %}
           <div class="alert alert-info" role="alert">
             {% if '(undo)' in message %}
               {{ message.strip('(undo)') }}

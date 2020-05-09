@@ -8,6 +8,7 @@ from flask import session
 
 from prodty.db import get_db
 from prodty.helpers import templated, to_index
+from prodty.forms import AddTaskForm
 
 from .tstamp import recognize
 
@@ -56,6 +57,7 @@ class SQL:
 
 
 def get_tasks():
+    """ Returns list of current user's tasks """
     return get_db().execute(SQL.get_user_tasks, (g.user['id'], )).fetchall()
 
 
@@ -82,12 +84,15 @@ def check_if_logged():
 @bp.route('/')
 @templated
 def index():
-    return {'tasks': get_tasks()}
+    form = AddTaskForm(request.form)
+    return {'tasks': get_tasks(), 'form': form}
 
 
 @bp.route('/add', methods=['POST'])
 def add():
-    task = request.form.get('new-task', '')
+    # form has no validators, so no conditions here
+    form = AddTaskForm(request.form)
+    task = form.task.data
 
     if not task:
         flash('No task typed :( Are you lazy?')

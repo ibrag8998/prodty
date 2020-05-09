@@ -6,8 +6,8 @@
 
 {% block content %}
   <form action="{{ url_for('task.add') }}" method="post">
-    <input type="text" placeholder="Add Task" name="new-task" id="new-task" class="mb-2">
-    <button type="submit" class="btn btn-primary btn-block">Add</button>
+    {{ form.task(class='form-control mb-2', placeholder='Write date or time to schefule') }}
+    {{ form.submit(class='btn btn-primary btn-block') }}
   </form>
 
   <div class="tasks-container mb-3">

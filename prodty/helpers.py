@@ -2,9 +2,9 @@ from functools import wraps
 
 from flask import render_template
 from flask import request
-from flask import g
 from flask import redirect
 from flask import url_for
+from flask import flash
 
 
 def to_index():

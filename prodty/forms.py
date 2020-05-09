@@ -28,9 +28,16 @@ class SignUpForm(AuthForm, Form):
     password_validators = AuthForm.password_validators + [
         EqualTo('confirm', 'Passwords must match'),
     ]
+
     password = PasswordField('Password', password_validators)
     confirm = PasswordField('Repeat password')
+    submit = SubmitField('Sign In')
 
 
 class SignInForm(AuthForm, Form):
     pass
+
+
+class AddTaskForm(Form):
+    task = StringField()
+    submit = SubmitField('Add Task')
