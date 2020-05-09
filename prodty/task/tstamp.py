@@ -83,4 +83,3 @@ def rec_time(text):
         hr, min_ = 18, 0
 
     return hr, min_
-
