@@ -83,7 +83,7 @@ def check_if_logged():
 
 
 @bp.route('/')
-@templated()
+@templated
 def index():
     return {'tasks': get_tasks()}
 

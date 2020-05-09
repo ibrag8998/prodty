@@ -1,9 +1,6 @@
-from functools import wraps
-
 from flask import (
     Blueprint,
     request,
-    render_template,
     redirect,
     url_for,
     session,
@@ -44,7 +41,7 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 
 @bp.route('/signup', methods=['GET', 'POST'])
-@templated()
+@templated
 def signup():
     form = SignUpForm(request.form)
     if valid_post(form):
@@ -70,7 +67,7 @@ def signup():
 
 
 @bp.route('/signin', methods=['GET', 'POST'])
-@templated()
+@templated
 def signin():
     form = SignInForm(request.form)
     if valid_post(form):
