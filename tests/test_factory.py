@@ -13,4 +13,3 @@ def test_config():
 def test_hello(client):
     resp = client.get('/hello')
     assert resp.data == b'Hello!'
-

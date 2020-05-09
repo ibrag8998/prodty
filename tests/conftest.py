@@ -13,10 +13,11 @@ class AuthActions:
         self.client = client
 
     def login(self, username='test_bot1', password='tester1'):
-        return self.client.post('/auth/signin', data={
-            'username': username,
-            'password': password
-        })
+        return self.client.post('/auth/signin',
+                                data={
+                                    'username': username,
+                                    'password': password
+                                })
 
     def logout(self):
         return self.client.post('/auth/logout')
@@ -36,7 +37,7 @@ def app():
         'TESTING': True,
         'DATABASE': db_path,
         'SECRET_KEY': 'testing'
-    }) # test_config is passed
+    })  # test_config is passed
 
     with app.app_context():
         init_db()
@@ -62,4 +63,3 @@ def client(app):
 @pytest.fixture
 def runner(app):
     return app.test_cli_runner()
-

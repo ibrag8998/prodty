@@ -1,5 +1,4 @@
 from flask import Blueprint
-from flask import render_template
 from flask import request
 from flask import redirect
 from flask import url_for
@@ -57,14 +56,12 @@ class SQL:
 
 
 def get_tasks():
-    return get_db().execute(SQL.get_user_tasks, (g.user['id'],)).fetchall()
+    return get_db().execute(SQL.get_user_tasks, (g.user['id'], )).fetchall()
 
 
 def save_last_pop(id_):
-    session['last_task_pop'] = SQL.row_to_dict(
-        get_db().execute(
-            SQL.get_task_by_id, (id_,)
-        ).fetchone())
+    session['last_task_pop'] = SQL.row_to_dict(get_db().execute(
+        SQL.get_task_by_id, (id_, )).fetchone())
 
 
 bp = Blueprint('task', __name__)
@@ -132,7 +129,7 @@ def done(id_):
     save_last_pop(id_)
 
     db = get_db()
-    db.execute(SQL.delete_task_by_id, (id_,))
+    db.execute(SQL.delete_task_by_id, (id_, ))
     db.commit()
     flash('Done! Good job! (undo)')
     # 'undo' is unique message, see wrapper.html
@@ -160,18 +157,15 @@ def restore():
 
     db = get_db()
     # contains info about last popped before pop
-    last = session['last_task_pop'] # just for short
+    last = session['last_task_pop']  # just for short
     # contains info about last popped after pop
-    task = db.execute(SQL.get_task_by_id, (last['id'],)).fetchone()
+    task = db.execute(SQL.get_task_by_id, (last['id'], )).fetchone()
 
     # if last pop was deleting (done), means task is None
     if not task:
         # insert last popped task
-        db.execute(SQL.add_task, (
-            last['author_id'],
-            last['content'],
-            last['tstamp']
-        ))
+        db.execute(SQL.add_task,
+                   (last['author_id'], last['content'], last['tstamp']))
     # elif task has no tstamp, means tstamp was deleted
     # so task['tstamp'] is None
     elif not task['tstamp']:
@@ -183,4 +177,3 @@ def restore():
     db.commit()
 
     return to_index()
-

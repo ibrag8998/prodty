@@ -38,8 +38,7 @@ def templated(_func=None, *, t=None):
             template_name = t
             # no template passed, use default
             if t is None:
-                template_name = request.endpoint.replace(
-                    '.', '/') + '.html'
+                template_name = request.endpoint.replace('.', '/') + '.html'
 
             ctx = func(*args, **kwargs)
             # None returned, make {}
@@ -51,6 +50,7 @@ def templated(_func=None, *, t=None):
 
             # render template and pass context
             return render_template(template_name, **ctx)
+
         return wrapper
 
     # @templated(t='signin.html') was called with args,
@@ -61,4 +61,3 @@ def templated(_func=None, *, t=None):
     # it means _func is not None, so return wrapper
     else:
         return decor(_func)
-

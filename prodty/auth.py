@@ -1,12 +1,10 @@
-from flask import (
-    Blueprint,
-    request,
-    redirect,
-    url_for,
-    session,
-    flash,
-    g
-)
+from flask import Blueprint
+from flask import request
+from flask import redirect
+from flask import url_for
+from flask import session
+from flask import flash
+from flask import g
 from werkzeug.security import generate_password_hash
 from werkzeug.security import check_password_hash
 
@@ -50,7 +48,7 @@ def signup():
 
         db = get_db()
 
-        user = db.execute(SQL.get_user_by_username, (username,)).fetchone()
+        user = db.execute(SQL.get_user_by_username, (username, )).fetchone()
         if user:
             flash('Such username already taken')
             return {'form': form}
@@ -75,7 +73,7 @@ def signin():
         password = form.password.data
 
         db = get_db()
-        user = db.execute(SQL.get_user_by_username, (username,)).fetchone()
+        user = db.execute(SQL.get_user_by_username, (username, )).fetchone()
 
         if not user:
             flash('No such user')
@@ -109,5 +107,4 @@ def load_user():
         g.user = None
     else:
         g.user = get_db().execute(SQL.get_user_by_username,
-                                  (username,)).fetchone()
-
+                                  (username, )).fetchone()

@@ -11,37 +11,38 @@ def test_signup(client, app):
     assert client.get('/auth/signup').status_code == 200
 
     # make correct signup request
-    resp = client.post('/auth/signup', data={
-       'username': 'somelogin',
-        'password': '6letter',
-        'password2': '6letter'
-    })
+    resp = client.post('/auth/signup',
+                       data={
+                           'username': 'somelogin',
+                           'password': '6letter',
+                           'password2': '6letter'
+                       })
     # test redirect
     assert resp.headers.get('Location') == 'http://localhost/auth/signin'
 
     # test if such user now exists
     with app.app_context():
-        assert get_db().execute(
-            sqls.get_user_by_username, ('somelogin',)
-        ).fetchone() is not None
+        assert get_db().execute(sqls.get_user_by_username,
+                                ('somelogin', )).fetchone() is not None
 
 
 # invalid input
 # 6 variants
 @pytest.mark.parametrize(
-    ('username', 'passwd', 'passwd2', 'message'), (
-        ('', '', 'a', b'Username is required'),
-        ('a', '', 'a', b'Password is required'),
-        ('a', 'a', '', b'Password confirmation is required'),
-        ('a', 'a', 'a', b'Password must contain at least 6 characters'),
-        ('a', 'abcdef', 'abcdee', b'Passwords does not match'),
-        ('test_bot1', 'tester1', 'tester1',
-         b'Such username is already taken')
-    ))
+    ('username', 'passwd', 'passwd2', 'message'),
+    (('', '', 'a', b'Username is required'),
+     ('a', '', 'a', b'Password is required'),
+     ('a', 'a', '', b'Password confirmation is required'),
+     ('a', 'a', 'a', b'Password must contain at least 6 characters'),
+     ('a', 'abcdef', 'abcdee', b'Passwords does not match'),
+     ('test_bot1', 'tester1', 'tester1', b'Such username is already taken')))
 def test_signup_validation(client, username, passwd, passwd2, message):
-    resp = client.post('/auth/signup', data={
-        'username': username, 'password': passwd, 'password2': passwd2
-    })
+    resp = client.post('/auth/signup',
+                       data={
+                           'username': username,
+                           'password': passwd,
+                           'password2': passwd2
+                       })
     assert message in resp.data
 
 
@@ -65,17 +66,17 @@ def test_login(client, auth):
 # invalid input
 # 5 variants
 @pytest.mark.parametrize(
-    ('username', 'passwd', 'message'), (
-        ('', '', b'Username is required'),
-        ('a', '', b'Password is required'),
-        ('a', 'a', b'Password must contain at least 6 characters'),
-        ('a', 'abcdef', b'No such user'),
-        ('test_bot1', 'incorrect', b'Incorrect password')
-    ))
+    ('username', 'passwd', 'message'),
+    (('', '', b'Username is required'), ('a', '', b'Password is required'),
+     ('a', 'a', b'Password must contain at least 6 characters'),
+     ('a', 'abcdef', b'No such user'),
+     ('test_bot1', 'incorrect', b'Incorrect password')))
 def test_signin_validation(client, username, passwd, message):
-    resp = client.post('/auth/signin', data={
-        'username': username, 'password': passwd
-    })
+    resp = client.post('/auth/signin',
+                       data={
+                           'username': username,
+                           'password': passwd
+                       })
     assert message in resp.data
 
 
@@ -86,4 +87,3 @@ def test_logout(client, auth):
     with client:
         client.post('/auth/logout')
         assert 'username' not in session
-

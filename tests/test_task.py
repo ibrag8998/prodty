@@ -1,6 +1,3 @@
-
-
-
 def test_add(client, auth):
     auth.login()
 
@@ -26,4 +23,3 @@ def test_index(client, auth):
 
     # as a bonus, test if username is shown (in navbar)
     assert b'test_bot1' in resp.data
-

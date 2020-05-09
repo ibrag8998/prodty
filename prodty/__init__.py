@@ -11,8 +11,7 @@ from .task.tstamp import tstamp_to_dt
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
-    app.config['DATABASE'] = os.path.join(
-        app.instance_path, 'prodty.sqlite')
+    app.config['DATABASE'] = os.path.join(app.instance_path, 'prodty.sqlite')
 
     if not os.path.exists(app.instance_path):
         os.makedirs(app.instance_path)
@@ -40,4 +39,3 @@ def create_app(test_config=None):
         return render_template('page_not_found.html'), 404
 
     return app
-

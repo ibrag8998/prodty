@@ -36,4 +36,3 @@ def test_init_db_command(runner, monkeypatch):
     # will be shown, and it contains 'Initialized' word in it
     assert 'Initialized' in result.output
     assert Recorder.called
-

@@ -17,9 +17,9 @@ class AuthForm(Form):
         DataRequired('Password cannot be empty'),
     ]
 
-    username = StringField('Username', [
-        Length(4, 25, 'Username must be between 4 and 25 characters length')
-    ])
+    username = StringField(
+        'Username',
+        [Length(4, 25, 'Username must be between 4 and 25 characters length')])
     password = PasswordField('Password', password_validators)
     submit = SubmitField('Sign Up')
 
@@ -34,4 +34,3 @@ class SignUpForm(AuthForm, Form):
 
 class SignInForm(AuthForm, Form):
     pass
-
