@@ -11,10 +11,11 @@ from flask import (
     g
 )
 from werkzeug.security import generate_password_hash
+from werkzeug.security import check_password_hash
 
 from .db import get_db
 from .helpers import templated, to_index
-from .forms import SignUpForm
+from .forms import SignUpForm, SignInForm
 from .validations import validate
 
 
@@ -29,6 +30,17 @@ class SQL:
         WHERE username = ?'
 
 
+def valid_post(form):
+    """
+    Yes, there is form.validate_on_submit() to use
+    with FlaskForm instances, but for some reasons there
+    is a bug with it: form.errors is empty, but
+    form.validate() is False.
+    So here is my skill of problem solving XD
+    """
+    return request.method == 'POST' and form.validate()
+
+
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 
@@ -36,8 +48,7 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 @templated()
 def signup():
     form = SignUpForm(request.form)
-    flash(form.errors)
-    if request.method == 'POST' and form.validate():
+    if valid_post(form):
         username = form.username.data
         password = form.password.data
 
@@ -45,7 +56,8 @@ def signup():
 
         user = db.execute(SQL.get_user_by_username, (username,)).fetchone()
         if user:
-            return dict(form=form)
+            flash('Such username already taken')
+            return {'form': form}
 
         db.execute(SQL.add_user, (username, generate_password_hash(password)))
         db.commit()
@@ -55,23 +67,27 @@ def signup():
         # his credentials again and minimize chance of forgetting something.
         return redirect(url_for('auth.signin'))
 
-    flash(form.errors)
-    return dict(form=form)
+    return {'form': form}
 
 
 @bp.route('/signin', methods=['GET', 'POST'])
 @templated()
 def signin():
-    if request.method == 'POST':
-        # get data
-        username = request.form.get('username', '')
-        passwd = request.form.get('password', '')
+    form = SignInForm(request.form)
+    if valid_post(form):
+        username = form.username.data
+        password = form.password.data
 
         db = get_db()
         user = db.execute(SQL.get_user_by_username, (username,)).fetchone()
 
-        if not validate(username, passwd, user, rule='signin'):
-            return {}
+        if not user:
+            flash('No such user')
+            return {'form': form}
+
+        if not check_password_hash(user['password'], password):
+            flash('Incorrect password')
+            return {'form': form}
 
         # add username to session, so site will think user is logged in
         # (see load_user() func)
@@ -81,7 +97,7 @@ def signin():
         # successful login, redirect to main page
         return to_index()
 
-    return {}
+    return {'form': form}
 
 
 @bp.route('/logout', methods=['POST'])
