@@ -16,7 +16,6 @@ from werkzeug.security import check_password_hash
 from .db import get_db
 from .helpers import templated, to_index
 from .forms import SignUpForm, SignInForm
-from .validations import validate
 
 
 class SQL:
